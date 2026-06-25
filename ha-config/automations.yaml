@@ -1,9 +1,23 @@
 # ha-config/automations.yaml
-# Автоматизация через webhook от аддона (мгновенные уведомления)
+#
+# Автоматизация: получаем webhook от MacroDroid и отправляем push на iPhone.
+#
+# Как подключить:
+#   Вариант А — если используешь единый файл automations.yaml:
+#     Скопируй содержимое этого файла в /config/automations.yaml
+#
+#   Вариант Б — если используешь папку automations/:
+#     Скопируй этот файл как /config/automations/vk_notifications.yaml
+#
+# Замени "mobile_app_iphone" на имя своего устройства.
+# Найти его: Настройки → Мобильное приложение → твоё устройство → имя сервиса.
+# Обычно выглядит как: notify.mobile_app_имя_телефона
 
-- id: vk_webhook_notification
-  alias: "VK: мгновенное уведомление через webhook"
-  description: "Срабатывает когда аддон VK Notifications получает новое сообщение"
+- id: vk_macrodroid_notification
+  alias: "VK: уведомление от MacroDroid"
+  description: >
+    MacroDroid перехватывает уведомление ВКонтакте на Android
+    и отправляет webhook сюда. Мы пересылаем push на iPhone.
   trigger:
     - platform: webhook
       webhook_id: "vk_new_message"
@@ -12,15 +26,10 @@
   action:
     - service: notify.mobile_app_iphone
       data:
-        title: "ВКонтакте"
+        title: >
+          {{ trigger.json.title | default("ВКонтакте") }}
         message: >
-          {% set sender = trigger.json.sender | default("Новое сообщение") %}
-          {% set text = trigger.json.text | default("") %}
-          {% if text %}
-            {{ sender }}: {{ text }}
-          {% else %}
-            Новое сообщение от {{ sender }}
-          {% endif %}
+          {{ trigger.json.text | default("Новое сообщение") }}
         data:
           url: "vkontakte://vk.com/im"
           push:
