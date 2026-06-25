@@ -1,30 +1,23 @@
 # ha-config/automations.yaml
 #
-# Автоматизация: получаем webhook от MacroDroid и отправляем push на iPhone.
+# Скопируй это в /config/automations.yaml на своём Home Assistant
+# Если используешь папку automations/ — сохрани как vk_notifications.yaml туда
 #
-# Как подключить:
-#   Вариант А — если используешь единый файл automations.yaml:
-#     Скопируй содержимое этого файла в /config/automations.yaml
-#
-#   Вариант Б — если используешь папку automations/:
-#     Скопируй этот файл как /config/automations/vk_notifications.yaml
-#
-# Замени "mobile_app_iphone" на имя своего устройства.
-# Найти его: Настройки → Мобильное приложение → твоё устройство → имя сервиса.
-# Обычно выглядит как: notify.mobile_app_имя_телефона
+# Чтобы добавить ещё одного пользователя — продублируй блок service
+# с именем его устройства из Настройки → Интеграции → Мобильное приложение
 
 - id: vk_macrodroid_notification
   alias: "VK: уведомление от MacroDroid"
   description: >
     MacroDroid перехватывает уведомление ВКонтакте на Android
-    и отправляет webhook сюда. Мы пересылаем push на iPhone.
+    и отправляет webhook сюда. Пересылаем push на iPhone.
   trigger:
     - platform: webhook
       webhook_id: "vk_new_message"
       allowed_methods:
         - POST
   action:
-    - service: notify.mobile_app_iphone
+    - service: notify.iphone_daniil
       data:
         title: >
           {{ trigger.json.title | default("ВКонтакте") }}
