@@ -1,0 +1,23 @@
+{
+  "name": "VK Notifications",
+  "description": "Мгновенные push-уведомления о новых сообщениях ВКонтакте через Long Poll API",
+  "version": "1.0.0",
+  "slug": "vk_notifications",
+  "init": false,
+  "arch": ["aarch64", "amd64", "armhf", "armv7", "i386"],
+  "startup": "application",
+  "boot": "auto",
+  "map": [],
+  "options": {
+    "vk_access_token": "",
+    "ha_url": "http://homeassistant:8123",
+    "ha_webhook_id": "",
+    "log_level": "info"
+  },
+  "schema": {
+    "vk_access_token": "str",
+    "ha_url": "str",
+    "ha_webhook_id": "str",
+    "log_level": "list(debug|info|warning|error)"
+  }
+}
