@@ -1,0 +1,11 @@
+{
+  "name": "VK Notifications Add-on",
+  "url": "https://github.com/BrainDeLook/vk-ha-notifications",
+  "maintainer": "BrainDeLook",
+  "addons": [
+    {
+      "slug": "vk_notifications",
+      "url": "https://github.com/BrainDeLook/vk-ha-notifications/tree/main/vk_notifications"
+    }
+  ]
+}
