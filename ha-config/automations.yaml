@@ -1,35 +1,27 @@
 # ha-config/automations.yaml
-# Подключи в configuration.yaml:
-#   automation: !include automations.yaml
+# Автоматизация через webhook от аддона (мгновенные уведомления)
 
-- id: vk_new_message_notification
-  alias: "VK: уведомление о новом сообщении"
-  description: "Отправляет push на iPhone при появлении непрочитанных сообщений ВКонтакте"
+- id: vk_webhook_notification
+  alias: "VK: мгновенное уведомление через webhook"
+  description: "Срабатывает когда аддон VK Notifications получает новое сообщение"
   trigger:
-    - platform: state
-      entity_id: sensor.vk_unread_count
-  condition:
-    - condition: template
-      value_template: >
-        {{ trigger.to_state.state | int(0) > trigger.from_state.state | int(0) }}
-    - condition: template
-      value_template: >
-        {{ trigger.to_state.state | int(0) > 0 }}
+    - platform: webhook
+      webhook_id: "vk_new_message"
+      allowed_methods:
+        - POST
   action:
     - service: notify.mobile_app_iphone
       data:
         title: "ВКонтакте"
         message: >
-          {% set count = states("sensor.vk_unread_count") | int(0) %}
-          {% set sender = states("sensor.vk_last_sender") %}
-          {% if sender != "none" and sender != "unknown" %}
-            {{ sender }}: {{ count }} непрочитанн{{ "ое" if count == 1 else "ых" }}
+          {% set sender = trigger.json.sender | default("Новое сообщение") %}
+          {% set text = trigger.json.text | default("") %}
+          {% if text %}
+            {{ sender }}: {{ text }}
           {% else %}
-            {{ count }} непрочитанн{{ "ое" if count == 1 else "ых" }} сообщени{{ "е" if count == 1 else "й" }}
+            Новое сообщение от {{ sender }}
           {% endif %}
         data:
           url: "vkontakte://vk.com/im"
           push:
             sound: default
-            badge: >
-              {{ states("sensor.vk_unread_count") | int(0) }}
